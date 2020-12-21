@@ -38,7 +38,7 @@
 
 #ifndef VERSION
 
-#define     VERSION     "PFM Software - pfm_unload V6.28 - 07/10/18"
+#define     VERSION     "PFM Software - pfm_unload V6.31 - 01/20/20"
 
 #endif
 
@@ -736,5 +736,21 @@
 
     - Added code to save PFM_USER_06 in CZMIL data as CZMIL_APP_HP_FILTERED.  This flag is set by the 
       czmilPfmFilter program.
+
+
+    Version 6.30
+    Jan C. Depner (PFM Software)
+    11/21/19
+
+    - Wasn't clearing the CZMIL status prior to updating the status.  Because of this, re-validating
+      wasn't working... DOH!!!
+
+
+    Version 6.31
+    Jan C. Depner (PFM Software)
+    01/20/20
+
+    - Screwup with CZMIL_RETURN_REPROCESSED.  I wasn't checking PFM_USER_05, I was checking CZMIL_RETURN_REPROCESSED in 
+      the PFM status... MAJOR DOH!!!
 
 */

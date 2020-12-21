@@ -632,6 +632,7 @@ int32_t unload_czmil_file (int32_t pfm_handle, int16_t file_number, int32_t ping
         {
           if (czmil_update_cpf_return_status (cpf_handle, prev_ping_number, &record) < 0)
             {
+              qDebug () << __LINE__ << prev_ping_number;
               czmil_perror ();
               return (-1);
             }
@@ -690,6 +691,7 @@ int32_t unload_czmil_file (int32_t pfm_handle, int16_t file_number, int32_t ping
         {
           if (czmil_update_cpf_return_status (cpf_handle, prev_ping_number, &record) < 0)
             {
+          qDebug () << __LINE__ << prev_ping_number << ping_number;
               czmil_perror ();
               return (-1);
             }
@@ -711,6 +713,7 @@ int32_t unload_czmil_file (int32_t pfm_handle, int16_t file_number, int32_t ping
 
       if (czmil_read_cpf_record (cpf_handle, ping_number, &record) != CZMIL_SUCCESS)
         {
+          qDebug () << __LINE__ << ping_number;
           czmil_perror ();
           return (-1);
         }
@@ -722,10 +725,20 @@ int32_t unload_czmil_file (int32_t pfm_handle, int16_t file_number, int32_t ping
   channel = beam_number / 100;
   retnum = beam_number % 100;
 
+  
+  //  Clear the CZMIL status
+  
+  record.channel[channel][retnum].status = 0;
+
   if (validity & PFM_MANUALLY_INVAL) record.channel[channel][retnum].status = CZMIL_RETURN_MANUALLY_INVAL;
   if (validity & PFM_FILTER_INVAL) record.channel[channel][retnum].status = CZMIL_RETURN_FILTER_INVAL;
   if (validity & PFM_SUSPECT) record.channel[channel][retnum].status |= CZMIL_RETURN_SUSPECT;
-  if (validity & CZMIL_RETURN_REPROCESSED) record.channel[channel][retnum].status |= CZMIL_RETURN_REPROCESSED;
+
+
+  //  This is the only user flag in PFM that is actually a part of the CZMIL status flags.  It will be passed in by pfmLoader as PFM_USER_05 so we want to make sure it gets passed
+  //  back out.  None of the other CZMIL set PFM user flags are part of the status.
+  
+  if (validity & PFM_USER_05) record.channel[channel][retnum].status |= CZMIL_RETURN_REPROCESSED;
 
 
   //  Set filter_reason to Hockey Puck filtered based on PFM_USER_06 set in czmilPfmFilter.
